@@ -3,6 +3,7 @@
  */
 package de.mpicbg.jug.plugins;
 
+import io.scif.services.DatasetIOService;
 import java.awt.BorderLayout;
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +13,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 
 import org.scijava.command.Command;
+import org.scijava.io.IOService;
 import org.scijava.plugin.Menu;
 import org.scijava.plugin.Parameter;
 import org.scijava.plugin.Plugin;
@@ -21,7 +23,6 @@ import bdv.util.BdvFunctions;
 import bdv.util.BdvHandlePanel;
 import bdv.util.BdvSource;
 import net.imagej.Dataset;
-import net.imagej.ImageJ;
 import net.imagej.ImgPlus;
 import net.imagej.display.DatasetView;
 import net.imglib2.type.NativeType;
@@ -42,6 +43,9 @@ public class TutorialPlugin3< T extends RealType< T > & NativeType< T >> impleme
 	@Parameter( label = "3D ImgPlus to be shown." )
 	private DatasetView datasetView;
 
+	@Parameter
+	private DatasetIOService datasetIO;
+
 	private ImgPlus< T > imgPlus;
 	private ImgPlus< ? > imgPlusDots;
 	private JFrame frame;
@@ -53,8 +57,7 @@ public class TutorialPlugin3< T extends RealType< T > & NativeType< T >> impleme
 
 		try {
 			if ( file.exists() && file.canRead() ) {
-				final ImageJ ij = new ImageJ();
-				final Dataset ds = ij.scifio().datasetIO().open( file.getAbsolutePath() );
+				final Dataset ds = datasetIO.open( file.getAbsolutePath() );
 				imgPlusDots = ds.getImgPlus();
 			}
 		} catch ( final IOException e ) {
